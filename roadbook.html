@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Road-book — Formation régularité</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --green: #3fb950;
+  --green-bg: rgba(63,185,80,.12);
+  --blue: #58a6ff;
+  --blue-bg: rgba(88,166,255,.12);
+  --amber: #d29922;
+  --amber-bg: rgba(210,153,34,.12);
+  --red: #f85149;
+  --red-bg: rgba(248,81,73,.12);
+  --radius: 10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+a{color:var(--blue)}
+
+/* Layout */
+.app{max-width:900px;margin:0 auto;padding:16px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.header-icon{font-size:24px}
+.header h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.header .sub{font-size:13px;color:var(--text2);margin-top:1px}
+
+/* Tabs */
+.tabs{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;gap:4px;margin-bottom:20px}
+.tab{flex:1;padding:8px 12px;border:none;background:transparent;color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border-radius:7px;transition:all .15s;text-align:center}
+.tab:hover{color:var(--text);background:var(--bg3)}
+.tab.active{background:var(--bg3);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.section{display:none}.section.active{display:block}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+
+/* Chrono */
+.chrono-wrap{text-align:center;padding:8px 0 12px}
+.chrono-time{font-family:'DM Mono',monospace;font-size:64px;font-weight:500;letter-spacing:2px;line-height:1;transition:color .3s}
+.chrono-time.waiting{color:var(--text2)}
+.chrono-time.running{color:var(--green);text-shadow:0 0 30px rgba(63,185,80,.3)}
+.chrono-time.stopped{color:var(--blue)}
+.chrono-meta{display:flex;justify-content:center;gap:28px;margin-top:10px;font-size:13px;color:var(--text2)}
+.chrono-meta strong{color:var(--text)}
+.chrono-label{font-size:12px;color:var(--text2);margin-bottom:6px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;line-height:1}
+.btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.btn-default{background:var(--bg3);color:var(--text);border-color:var(--border)}
+.btn-default:hover{background:#2d333b}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:rgba(63,185,80,.3)}
+.btn-green:hover{background:rgba(63,185,80,.2)}
+.btn-red{background:var(--red-bg);color:var(--red);border-color:rgba(248,81,73,.3)}
+.btn-red:hover{background:rgba(248,81,73,.2)}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border-color:rgba(88,166,255,.3)}
+.btn-blue:hover{background:rgba(88,166,255,.2)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:600}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-amber{background:var(--amber-bg);color:var(--amber)}
+.badge-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.bib{display:inline-block;background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.3);border-radius:5px;padding:1px 8px;font-size:12px;font-family:'DM Mono',monospace;font-weight:500;margin:1px}
+
+/* Forms */
+label{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;margin-top:10px}
+input,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;padding:9px 12px;outline:none;transition:border .15s}
+input:focus,select:focus{border-color:var(--blue)}
+select option{background:var(--bg3)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* Status bar */
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;font-size:13px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:7px;vertical-align:middle}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.5s infinite}
+.dot-gray{background:var(--text2)}
+.dot-blue{background:var(--blue)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* Dossard input */
+.dossard-wrap{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.dossard-input{width:88px;font-size:36px;font-family:'DM Mono',monospace;font-weight:600;text-align:center;padding:8px 6px;border-radius:10px;flex-shrink:0}
+.id-card{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;min-width:160px}
+.id-name{font-size:18px;font-weight:600;margin-bottom:3px}
+
+/* Questions */
+.q-block{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;background:var(--bg2)}
+.q-pk{font-size:12px;color:var(--text2);margin-bottom:3px;font-family:'DM Mono',monospace}
+.q-text{font-size:15px;font-weight:500;margin-bottom:10px;line-height:1.4}
+.q-label{font-size:13px;color:var(--blue);margin-bottom:5px;font-weight:500}
+
+/* Formateur groupes */
+.group-row{display:grid;grid-template-columns:100px 1fr 110px 1fr 90px auto auto;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.group-row:last-child{border-bottom:none}
+@media(max-width:700px){.group-row{grid-template-columns:1fr 1fr;gap:8px;padding:12px 0}}
+.gchrono{font-family:'DM Mono',monospace;font-size:16px;font-weight:500;text-align:center}
+.gchrono.waiting{color:var(--text2)}
+.gchrono.running{color:var(--green)}
+.gchrono.stopped{color:var(--blue)}
+.gtimes{font-size:12px;color:var(--text2);line-height:1.6}
+.gspd{font-size:13px;font-weight:600;text-align:right}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--text2);font-weight:500;padding:9px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* Config list items */
+.cfg-item{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:8px;font-size:13px}
+.cfg-item:last-child{border-bottom:none}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:500;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:999;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* Loading */
+.loading{display:flex;align-items:center;gap:8px;color:var(--text2);font-size:13px}
+.spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* QR + URL */
+.url-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'DM Mono',monospace;font-size:12px;word-break:break-all;color:var(--blue);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-icon">🛣️</div>
+    <div>
+      <h1 id="app-title">Road-book — Formation régularité</h1>
+      <div class="sub" id="app-sub">Chargement…</div>
+    </div>
+    <div style="margin-left:auto" id="sync-indicator"></div>
+  </div>
+
+  <!-- ⚙️ SETUP : URL Apps Script -->
+  <div id="setup-panel" class="card" style="border-color:var(--amber);display:none">
+    <div class="card-title" style="color:var(--amber)">⚙️ Configuration requise</div>
+    <p style="font-size:14px;color:var(--text2);margin-bottom:10px">Colle l'URL de ton Google Apps Script (Web App) pour activer la synchronisation.</p>
+    <label>URL de déploiement Apps Script</label>
+    <input type="text" id="setup-url" placeholder="https://script.google.com/macros/s/…/exec">
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="saveScriptUrl()">✓ Enregistrer et tester</button>
+    </div>
+    <div id="setup-msg" style="margin-top:8px;font-size:13px"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('stagiaire')">👤 Stagiaires</button>
+    <button class="tab" onclick="switchTab('formateur')">🛡️ Formateur</button>
+    <button class="tab" onclick="switchTab('config')">⚙️ Config</button>
+  </div>
+
+  <!-- ======== STAGIAIRE ======== -->
+  <div id="tab-stagiaire" class="section active">
+    <div class="status-bar">
+      <span><span class="dot dot-gray" id="s-dot"></span><span id="s-status-txt">En attente du formateur…</span></span>
+      <span style="font-size:13px;color:var(--text2)" id="s-km-info"></span>
+    </div>
+
+    <div class="card">
+      <div class="chrono-label" id="s-group-label">—</div>
+      <div class="chrono-wrap">
+        <div class="chrono-time waiting" id="s-chrono">00:00:00</div>
+      </div>
+      <div class="chrono-meta">
+        <span>Départ : <strong id="s-dep">—</strong></span>
+        <span>Arrivée : <strong id="s-arr">—</strong></span>
+        <span id="s-spd"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mon dossard</div>
+      <div class="dossard-wrap">
+        <input type="number" class="dossard-input" id="s-bib" min="1" max="99" placeholder="#" oninput="onBibChange()">
+        <div class="id-card" id="s-id-card">
+          <div style="color:var(--text2);font-size:13px">Saisis ton numéro de dossard</div>
+        </div>
+      </div>
+
+      <div id="s-questions-area"><p style="color:var(--text2);font-size:14px">Identifie-toi pour voir les questions.</p></div>
+
+      <div class="btn-row" id="s-submit-row" style="display:none">
+        <button class="btn btn-blue" onclick="submitAnswers()">📤 Envoyer mes réponses</button>
+        <span style="font-size:13px;color:var(--text2);align-self:center" id="s-sent-info"></span>
+      </div>
+      <div id="s-msg"></div>
+    </div>
+  </div>
+
+  <!-- ======== FORMATEUR ======== -->
+  <div id="tab-formateur" class="section">
+    <div class="card">
+      <div class="card-title">⏱️ Chronos par groupe</div>
+      <div id="f-groups-control"><div class="loading"><div class="spinner"></div>Chargement…</div></div>
+      <div class="btn-row" style="padding-top:12px;border-top:1px solid var(--border);margin-top:4px">
+        <button class="btn btn-green" onclick="fDepAll()">▶ Départ TOUS</button>
+        <button class="btn btn-red" onclick="fArrAll()">⏹ Arrivée TOUS</button>
+        <button class="btn btn-default" onclick="fReset()">🔄 Réinitialiser</button>
+        <button class="btn btn-default" onclick="refreshFormateur()">↻ Rafraîchir</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Réponses par groupe</div>
+      <div class="table-wrap" id="f-answers-table"><p style="color:var(--text2);font-size:14px">Aucune réponse.</p></div>
+    </div>
+  </div>
+
+  <!-- ======== CONFIG ======== -->
+  <div id="tab-config" class="section">
+    <div class="card">
+      <div class="card-title">Paramètres du parcours</div>
+      <label>Titre</label><input type="text" id="cfg-title" value="Road-book Formation">
+      <div class="grid2" style="margin-top:8px">
+        <div><label>Distance (km)</label><input type="number" id="cfg-km" value="45" min="1"></div>
+        <div><label>Vitesse cible (km/h)</label><input type="number" id="cfg-vma" value="50" min="1"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Groupes & dossards</div>
+      <div id="cfg-groups-list"></div>
+      <hr class="sep">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ajouter un groupe</div>
+      <div class="grid2">
+        <div><label>Nom</label><input type="text" id="cfg-gname" placeholder="ex : Groupe A"></div>
+        <div><label>Dossards (ex : 1,2,3 ou 1-3)</label><input type="text" id="cfg-gbibs" placeholder="ex : 1,2,3"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="addGroup()">+ Ajouter</button>
+        <button class="btn btn-default" onclick="autoGenGroups()">✨ 7 groupes auto (1-19)</button>
+      </div>
+      <div id="cfg-groups-msg" style="margin-top:8px;font-size:13px"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Questions</div>
+      <div id="cfg-questions-list"></div>
+      <hr class="sep">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ajouter une question</div>
+      <div class="grid2">
+        <div><label>Point kilométrique</label><input type="text" id="cfg-qpk" placeholder="ex : PK 12"></div>
+        <div><label>Réponse attendue (optionnel)</label><input type="text" id="cfg-qanswer" placeholder="ex : Stop"></div>
+      </div>
+      <label>Intitulé</label>
+      <input type="text" id="cfg-qtext" placeholder="ex : Relevez la signalisation au carrefour" style="margin-bottom:8px">
+      <div class="btn-row">
+        <button class="btn btn-blue" onclick="addQuestion()">+ Ajouter</button>
+        <button class="btn btn-default" onclick="addSampleQuestions()">📋 Exemples</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="saveConfig()">💾 Sauvegarder la config</button>
+      <button class="btn btn-red" onclick="resetAll()">🗑️ Réinitialiser tout</button>
+    </div>
+    <div id="cfg-msg" style="margin-top:8px;font-size:13px"></div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">🔗 URL Apps Script</div>
+      <label>URL de déploiement (Web App)</label>
+      <input type="text" id="cfg-script-url" placeholder="https://script.google.com/macros/s/…/exec" oninput="updateScriptUrl()">
+      <p style="font-size:12px;color:var(--text2);margin-top:6px">Modifie l'URL ici si tu redéploies ton script.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+//  CONFIG — coller l'URL de ton Apps Script ici au déploiement
+// ============================================================
+let SCRIPT_URL = localStorage.getItem('roadbook_script_url') || '';
+
+// ============================================================
+//  STATE LOCAL
+// ============================================================
+let config = { title:'Road-book Formation', km:45, vma:50, groups:[], questions:[] };
+let races = {};
+let answers = {};
+let currentBib = null, currentGroupId = null;
+let sLocalTimer = null, sPollTimer = null, fTimers = {};
+let draftTimer = null;
+
+// ============================================================
+//  API CALLS
+// ============================================================
+async function api(params) {
+  if (!SCRIPT_URL) { showSetup(); throw new Error('No script URL'); }
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
+  const res = await fetch(url);
+  return await res.json();
+}
+
+async function loadConfig()  { const d = await api({action:'getConfig'}); if(d&&!d.error){ config=d; applyConfig(); } }
+async function saveConfigRemote() { return await api({action:'saveConfig', data:JSON.stringify(config)}); }
+async function loadRaces()   { const d = await api({action:'getRaces'}); if(d&&!d.error) races=d; }
+async function loadAnswers() { const d = await api({action:'getAnswers'}); if(d&&!d.error) answers=d; }
+async function setRaceRemote(gid, type) {
+  const ts = Date.now();
+  if (!races[gid]) races[gid] = {};
+  races[gid][type] = ts;
+  if (type==='dep') races[gid].arr = null;
+  return await api({action:'setRace', groupId:gid, type, ts});
+}
+async function saveAnswersRemote(gid, ans) {
+  return await api({action:'saveAnswers', groupId:gid, data:JSON.stringify(ans)});
+}
+
+function showSetup() {
+  document.getElementById('setup-panel').style.display = 'block';
+}
+
+async function saveScriptUrl() {
+  const url = document.getElementById('setup-url').value.trim();
+  if (!url) return;
+  SCRIPT_URL = url; localStorage.setItem('roadbook_script_url', url);
+  document.getElementById('cfg-script-url').value = url;
+  const msg = document.getElementById('setup-msg');
+  msg.textContent = 'Test en cours…'; msg.style.color = 'var(--text2)';
+  try {
+    const d = await api({action:'getConfig'});
+    if (d.error) throw new Error(d.error);
+    msg.textContent = '✓ Connexion réussie !'; msg.style.color = 'var(--green)';
+    document.getElementById('setup-panel').style.display = 'none';
+    init();
+  } catch(e) {
+    msg.textContent = '✗ Erreur : ' + e.message; msg.style.color = 'var(--red)';
+  }
+}
+
+function updateScriptUrl() {
+  const url = document.getElementById('cfg-script-url').value.trim();
+  SCRIPT_URL = url; localStorage.setItem('roadbook_script_url', url);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+async function init() {
+  if (!SCRIPT_URL) { showSetup(); return; }
+  setSyncIndicator('loading');
+  try {
+    await loadConfig();
+    await loadRaces();
+    await loadAnswers();
+    setSyncIndicator('ok');
+    renderStagiaire();
+    startStagiairePoll();
+  } catch(e) {
+    setSyncIndicator('error');
+    showSetup();
+  }
+}
+
+function setSyncIndicator(state) {
+  const el = document.getElementById('sync-indicator');
+  if (state==='loading') el.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  else if (state==='ok')    el.innerHTML = '<span class="badge badge-green">● Sync</span>';
+  else if (state==='error') el.innerHTML = '<span class="badge" style="background:var(--red-bg);color:var(--red)">✗ Hors ligne</span>';
+}
+
+function applyConfig() {
+  document.getElementById('app-title').textContent = config.title || 'Road-book';
+  document.getElementById('app-sub').textContent = (config.km||'—') + ' km · cible ' + (config.vma||'—') + ' km/h';
+}
+
+// ============================================================
+//  TABS
+// ============================================================
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['stagiaire','formateur','config'][i]===t));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if (t==='stagiaire') { startStagiairePoll(); }
+  else stopStagiairePoll();
+  if (t==='formateur') refreshFormateur();
+  if (t==='config') renderConfig();
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function fmtTime(ms) { if (!ms&&ms!==0||isNaN(ms)) return '00:00:00'; const s=Math.floor(Math.abs(ms)/1000); return [Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(x=>String(x).padStart(2,'0')).join(':'); }
+function fmtHM(ts) { if (!ts) return '—'; return new Date(ts).toLocaleTimeString('fr-FR'); }
+function calcSpd(dep,arr,km) { if (!dep||!arr||!km) return null; return ((km/((arr-dep)/3600000)).toFixed(1)); }
+function parseBibs(str) { const b=[]; str.split(',').forEach(p=>{ p=p.trim(); if(p.includes('-')){ const[a,b2]=p.split('-').map(Number); for(let i=a;i<=b2;i++) b.push(i); }else if(p&&!isNaN(p)) b.push(Number(p)); }); return b; }
+function findGroupByBib(bib) { return config.groups.find(g=>g.bibs&&g.bibs.includes(Number(bib)))||null; }
+function getRace(gid) { return races[gid]||{}; }
+
+function toast(txt, type='ok') {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.borderColor = type==='ok'?'var(--green)':type==='err'?'var(--red)':'var(--blue)';
+  t.textContent = txt;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+// ============================================================
+//  STAGIAIRE
+// ============================================================
+function startStagiairePoll() {
+  stopStagiairePoll();
+  sPollTimer = setInterval(async()=>{
+    try { await loadRaces(); updateStagiaireChrono(); } catch(e){}
+  }, 3000);
+}
+function stopStagiairePoll() { if(sPollTimer){ clearInterval(sPollTimer); sPollTimer=null; } }
+
+function renderStagiaire() {
+  const sel = document.getElementById('s-bib');
+  applyConfig();
+  document.getElementById('s-km-info').textContent = (config.km||'—') + ' km · cible ' + (config.vma||'—') + ' km/h';
+}
+
+function updateStagiaireChrono() {
+  if (!currentGroupId) { document.getElementById('s-group-label').textContent='— Sélectionne ton dossard —'; return; }
+  const r = getRace(currentGroupId);
+  const g = config.groups.find(x=>x.id===currentGroupId);
+  const el = document.getElementById('s-chrono');
+  const dot = document.getElementById('s-dot');
+  document.getElementById('s-group-label').textContent = g ? g.name + ' — chrono en direct' : '—';
+  document.getElementById('s-dep').textContent = fmtHM(r.dep);
+  document.getElementById('s-arr').textContent = fmtHM(r.arr);
+
+  if (r.dep && !r.arr) {
+    el.className = 'chrono-time running'; dot.className='dot dot-green';
+    document.getElementById('s-status-txt').textContent = 'Votre groupe est en route…';
+    if (!sLocalTimer) sLocalTimer = setInterval(()=>{ const e=document.getElementById('s-chrono'); const rr=getRace(currentGroupId); if(e&&rr.dep&&!rr.arr) e.textContent=fmtTime(Date.now()-rr.dep); },500);
+    document.getElementById('s-spd').textContent = '';
+  } else if (r.dep && r.arr) {
+    el.className='chrono-time stopped'; el.textContent=fmtTime(r.arr-r.dep);
+    if(sLocalTimer){ clearInterval(sLocalTimer); sLocalTimer=null; }
+    dot.className='dot dot-blue';
+    document.getElementById('s-status-txt').textContent='Parcours terminé';
+    const spd=calcSpd(r.dep,r.arr,config.km);
+    document.getElementById('s-spd').innerHTML=spd?`Vitesse moy. : <strong>${spd} km/h</strong>`:'';
+  } else {
+    el.className='chrono-time waiting'; el.textContent='00:00:00';
+    if(sLocalTimer){ clearInterval(sLocalTimer); sLocalTimer=null; }
+    dot.className='dot dot-gray';
+    document.getElementById('s-status-txt').textContent='En attente du départ de votre groupe…';
+    document.getElementById('s-spd').textContent='';
+  }
+}
+
+function onBibChange() {
+  const bib = parseInt(document.getElementById('s-bib').value);
+  const card = document.getElementById('s-id-card');
+  if (!bib||isNaN(bib)) {
+    currentBib=null; currentGroupId=null;
+    card.innerHTML='<div style="color:var(--text2);font-size:13px">Saisis ton numéro de dossard</div>';
+    document.getElementById('s-questions-area').innerHTML='<p style="color:var(--text2);font-size:14px">Identifie-toi pour voir les questions.</p>';
+    document.getElementById('s-submit-row').style.display='none';
+    document.getElementById('s-group-label').textContent='—'; return;
+  }
+  const g = findGroupByBib(bib);
+  if (!g) {
+    currentBib=null; currentGroupId=null;
+    card.innerHTML=`<div style="color:var(--red);font-size:13px">Dossard <strong>#${bib}</strong> introuvable.</div>`;
+    document.getElementById('s-questions-area').innerHTML='';
+    document.getElementById('s-submit-row').style.display='none'; return;
+  }
+  currentBib=bib; currentGroupId=g.id;
+  const bibsHtml=(g.bibs||[]).map(b=>`<span class="bib">#${b}</span>`).join(' ');
+  card.innerHTML=`<div class="id-name">${g.name}</div><div style="margin-top:4px">${bibsHtml}</div>`;
+  updateStagiaireChrono();
+  renderQuestions();
+  if (config.questions.length) document.getElementById('s-submit-row').style.display='flex';
+}
+
+function renderQuestions() {
+  const area = document.getElementById('s-questions-area');
+  if (!currentGroupId||!config.questions.length) { area.innerHTML='<p style="color:var(--text2);font-size:14px">Aucune question configurée.</p>'; return; }
+  const saved = answers[currentGroupId]||{}, sent=!!saved._ts;
+  if (sent) document.getElementById('s-sent-info').textContent='✓ Envoyé à '+new Date(saved._ts).toLocaleTimeString('fr-FR');
+  area.innerHTML = config.questions.map((q,i)=>`
+    <div class="q-block">
+      <div class="q-pk">${q.pk?'📍 '+q.pk+' — ':''}Question ${i+1}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="q-label">Réponse ${i+1} :</div>
+      <input type="text" id="ans-${q.id}" placeholder="Ta réponse…" value="${(saved[q.id]||'').replace(/"/g,'&quot;')}"
+        oninput="autoSaveDraft('${q.id}',this.value)">
+    </div>`).join('');
+}
+
+function autoSaveDraft(qid, val) {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(async()=>{
+    if (!currentGroupId) return;
+    if (!answers[currentGroupId]) answers[currentGroupId]={};
+    answers[currentGroupId][qid]=val;
+  }, 600);
+}
+
+async function submitAnswers() {
+  if (!currentGroupId) { toast('Identifie-toi d\'abord.','err'); return; }
+  const ans = {};
+  config.questions.forEach(q=>{ const el=document.getElementById('ans-'+q.id); if(el) ans[q.id]=el.value.trim(); });
+  ans._ts = Date.now();
+  answers[currentGroupId] = ans;
+  try {
+    await saveAnswersRemote(currentGroupId, ans);
+    document.getElementById('s-sent-info').textContent='✓ Envoyé à '+new Date().toLocaleTimeString('fr-FR');
+    toast('Réponses enregistrées ✓');
+  } catch(e) { toast('Erreur réseau','err'); }
+}
+
+// ============================================================
+//  FORMATEUR
+// ============================================================
+function startAllFTimers() {
+  Object.values(fTimers).forEach(clearInterval); fTimers={};
+  config.groups.forEach(g=>{ fTimers[g.id]=setInterval(()=>updateGroupCell(g.id),1000); });
+}
+
+function updateGroupCell(gid) {
+  const el = document.getElementById('gchrono-'+gid); if(!el) return;
+  const r = getRace(gid);
+  if (r.dep&&!r.arr) { el.className='gchrono running'; el.textContent=fmtTime(Date.now()-r.dep); }
+  else if (r.dep&&r.arr) { el.className='gchrono stopped'; el.textContent=fmtTime(r.arr-r.dep); }
+  else { el.className='gchrono waiting'; el.textContent='00:00:00'; }
+}
+
+function renderGroupRow(g) {
+  const r = getRace(g.id);
+  const bibsHtml=(g.bibs||[]).map(b=>`<span class="bib">#${b}</span>`).join('');
+  const spd = calcSpd(r.dep,r.arr,config.km);
+  let spdHtml='—';
+  if (spd) { const diff=Math.abs(parseFloat(spd)-config.vma)/config.vma; const c=diff<0.05?'var(--green)':diff<0.15?'var(--amber)':'var(--red)'; spdHtml=`<span style="color:${c}">${spd} km/h</span>`; }
+  let badgeHtml='<span class="badge badge-gray">Attente</span>';
+  if (r.dep&&r.arr) badgeHtml='<span class="badge badge-blue">Arrivé</span>';
+  else if (r.dep) badgeHtml='<span class="badge badge-green">En route</span>';
+  const el = document.getElementById('gcr-'+g.id); if(!el) return;
+  el.innerHTML=`
+    <span style="font-weight:600;font-size:14px">${g.name}</span>
+    <span>${bibsHtml}</span>
+    <span class="gchrono waiting" id="gchrono-${g.id}">00:00:00</span>
+    <span class="gtimes">Dep: <strong>${fmtHM(r.dep)}</strong><br>Arr: <strong>${fmtHM(r.arr)}</strong></span>
+    <span class="gspd" id="gspd-${g.id}">${spdHtml}</span>
+    <span id="gbadge-${g.id}">${badgeHtml}</span>
+    <button class="btn btn-green" id="gbtn-dep-${g.id}" onclick="fDep('${g.id}')" ${r.dep?'disabled':''}>▶ Dep</button>
+    <button class="btn btn-red"   id="gbtn-arr-${g.id}" onclick="fArr('${g.id}')" ${(!r.dep||r.arr)?'disabled':''}>⏹ Arr</button>
+  `;
+  updateGroupCell(g.id);
+}
+
+async function refreshFormateur() {
+  setSyncIndicator('loading');
+  try { await loadConfig(); await loadRaces(); await loadAnswers(); setSyncIndicator('ok'); } catch(e){ setSyncIndicator('error'); }
+  const ctrl = document.getElementById('f-groups-control');
+  if (!config.groups.length) { ctrl.innerHTML='<p style="color:var(--text2);font-size:14px">Aucun groupe configuré.</p>'; return; }
+  ctrl.innerHTML = config.groups.map(g=>`<div class="group-row" id="gcr-${g.id}"></div>`).join('');
+  config.groups.forEach(g=>renderGroupRow(g));
+  startAllFTimers();
+  renderAnswersTable();
+}
+
+function renderAnswersTable() {
+  const at = document.getElementById('f-answers-table');
+  const qs = config.questions, gs = config.groups;
+  if (!qs.length) { at.innerHTML='<p style="color:var(--text2);font-size:14px">Aucune question définie.</p>'; return; }
+  let html=`<table><thead><tr><th>Groupe</th><th>Dossards</th>`;
+  qs.forEach((q,i)=>{ html+=`<th>Q${i+1}${q.pk?' <span style="color:var(--text2)">('+q.pk+')</span>':''}</th>`; });
+  html+=`<th>Vitesse</th><th>Statut</th></tr></thead><tbody>`;
+  gs.forEach(g=>{
+    const r=getRace(g.id), a=answers[g.id]||{}, sent=!!a._ts;
+    const spd=calcSpd(r.dep,r.arr,config.km);
+    let spdHtml='—';
+    if(spd){ const diff=Math.abs(parseFloat(spd)-config.vma)/config.vma; const c=diff<0.05?'var(--green)':diff<0.15?'var(--amber)':'var(--red)'; spdHtml=`<span style="color:${c};font-weight:600">${spd} km/h</span>`; }
+    const bibsHtml=(g.bibs||[]).map(b=>`<span class="bib">#${b}</span>`).join('');
+    html+=`<tr><td style="font-weight:600">${g.name}</td><td>${bibsHtml}</td>`;
+    qs.forEach(q=>{ const ans=a[q.id]||''; let style=''; if(q.answer&&ans) style=`color:${ans.trim().toLowerCase()===q.answer.trim().toLowerCase()?'var(--green)':'var(--red)'}`;
+      html+=`<td style="${style}">${ans||'<span style="color:var(--text2)">—</span>'}</td>`; });
+    html+=`<td>${spdHtml}</td><td>${sent?'<span class="badge badge-green">✓ Envoyé</span>':'<span class="badge badge-gray">En attente</span>'}</td></tr>`;
+  });
+  html+='</tbody></table>';
+  at.innerHTML=html;
+}
+
+async function fDep(gid) {
+  await setRaceRemote(gid,'dep');
+  renderGroupRow(config.groups.find(g=>g.id===gid));
+  renderAnswersTable();
+}
+async function fArr(gid) {
+  const ts=Date.now(); if(!races[gid]) races[gid]={}; races[gid].arr=ts;
+  await api({action:'setRace',groupId:gid,type:'arr',ts});
+  renderGroupRow(config.groups.find(g=>g.id===gid));
+  renderAnswersTable();
+}
+async function fDepAll() { const ts=Date.now(); for(const g of config.groups){ if(!races[g.id]||!races[g.id].dep){ races[g.id]={dep:ts,arr:null}; await api({action:'setRace',groupId:g.id,type:'dep',ts}); } } refreshFormateur(); }
+async function fArrAll() { const ts=Date.now(); for(const g of config.groups){ if(races[g.id]&&races[g.id].dep&&!races[g.id].arr){ races[g.id].arr=ts; await api({action:'setRace',groupId:g.id,type:'arr',ts}); } } refreshFormateur(); }
+async function fReset() { if(!confirm('Réinitialiser chronos + réponses ?')) return; races={}; answers={}; await api({action:'resetRaces'}); refreshFormateur(); }
+
+// ============================================================
+//  CONFIG
+// ============================================================
+function renderConfig() {
+  document.getElementById('cfg-title').value=config.title;
+  document.getElementById('cfg-km').value=config.km;
+  document.getElementById('cfg-vma').value=config.vma;
+  document.getElementById('cfg-script-url').value=SCRIPT_URL||'';
+  const gl=document.getElementById('cfg-groups-list');
+  gl.innerHTML=!config.groups.length?'<p style="color:var(--text2);font-size:13px;margin-bottom:8px">Aucun groupe.</p>':
+    config.groups.map((g,i)=>`<div class="cfg-item">
+      <span style="flex:1"><strong>${g.name}</strong> — ${(g.bibs||[]).map(b=>`<span class="bib">#${b}</span>`).join(' ')}</span>
+      <button class="btn btn-default" style="padding:3px 10px;font-size:12px" onclick="removeGroup(${i})">✕</button>
+    </div>`).join('');
+  const ql=document.getElementById('cfg-questions-list');
+  ql.innerHTML=!config.questions.length?'<p style="color:var(--text2);font-size:13px;margin-bottom:8px">Aucune question.</p>':
+    config.questions.map((q,i)=>`<div class="cfg-item">
+      <span style="flex:1">${q.pk?'<strong>'+q.pk+'</strong> — ':''}${q.text}${q.answer?' <span style="color:var(--green)">(→ '+q.answer+')</span>':''}</span>
+      <button class="btn btn-default" style="padding:3px 10px;font-size:12px;flex-shrink:0" onclick="removeQuestion(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addGroup() {
+  const n=document.getElementById('cfg-gname').value.trim(), bstr=document.getElementById('cfg-gbibs').value.trim();
+  if(!n){ document.getElementById('cfg-groups-msg').innerHTML='<span style="color:var(--red)">Nom obligatoire.</span>'; return; }
+  const bibs=parseBibs(bstr), used=config.groups.flatMap(g=>g.bibs||[]), col=bibs.filter(b=>used.includes(b));
+  if(col.length){ document.getElementById('cfg-groups-msg').innerHTML=`<span style="color:var(--red)">Dossard(s) déjà utilisé(s) : ${col.map(b=>'#'+b).join(', ')}</span>`; return; }
+  config.groups.push({id:'g'+Date.now(),name:n,bibs});
+  document.getElementById('cfg-gname').value=''; document.getElementById('cfg-gbibs').value=''; document.getElementById('cfg-groups-msg').innerHTML='';
+  renderConfig();
+}
+function removeGroup(i){ config.groups.splice(i,1); renderConfig(); }
+
+function autoGenGroups(){
+  const sizes=[3,3,3,3,3,2,2],letters=['A','B','C','D','E','F','G'];
+  config.groups=[]; let n=1;
+  sizes.forEach((s,i)=>{ const b=[]; for(let j=0;j<s;j++) b.push(n++); config.groups.push({id:'g'+letters[i],name:'Groupe '+letters[i],bibs:b}); });
+  renderConfig();
+}
+
+function addQuestion(){
+  const pk=document.getElementById('cfg-qpk').value.trim(), t=document.getElementById('cfg-qtext').value.trim(), a=document.getElementById('cfg-qanswer').value.trim();
+  if(!t) return;
+  config.questions.push({id:'q'+Date.now(),pk,text:t,answer:a});
+  ['cfg-qpk','cfg-qtext','cfg-qanswer'].forEach(id=>document.getElementById(id).value='');
+  renderConfig();
+}
+function removeQuestion(i){ config.questions.splice(i,1); renderConfig(); }
+
+function addSampleQuestions(){
+  [{pk:'PK 5',text:'Limitation de vitesse à l\'entrée du village',answer:'50'},{pk:'PK 12',text:'N° de la route départementale au giratoire',answer:''},{pk:'PK 18',text:'Nombre de panneaux de danger sur le dernier tronçon',answer:''},{pk:'PK 27',text:'Type de signalisation au passage à niveau',answer:''},{pk:'PK 35',text:'Altitude sur la borne kilométrique',answer:''}]
+  .forEach(q=>config.questions.push({id:'q'+Math.random().toString(36).slice(2),...q}));
+  renderConfig();
+}
+
+async function saveConfig(){
+  config.title=document.getElementById('cfg-title').value;
+  config.km=parseFloat(document.getElementById('cfg-km').value)||45;
+  config.vma=parseFloat(document.getElementById('cfg-vma').value)||50;
+  try { await saveConfigRemote(); applyConfig(); toast('Configuration sauvegardée ✓'); }
+  catch(e){ toast('Erreur réseau','err'); }
+}
+
+async function resetAll(){
+  if(!confirm('Réinitialiser chrono + réponses (config conservée) ?')) return;
+  races={}; answers={};
+  try { await api({action:'resetRaces'}); toast('Réinitialisé'); } catch(e){ toast('Erreur','err'); }
+}
+
+// ============================================================
+//  START
+// ============================================================
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
